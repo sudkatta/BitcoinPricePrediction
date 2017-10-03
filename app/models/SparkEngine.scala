@@ -103,9 +103,6 @@ object SparkEngine {
 
   case class PredictionValues(price: Double, date: String)
   implicit val writesPredictionValues:Writes[PredictionValues] = Json.writes[PredictionValues]
-  implicit val predictionValuesReads:Reads[PredictionValues] = (
-    (JsPath \ "price").read[Double] and
-      (JsPath \ "date").read[String]
-    )(PredictionValues.apply _)
+
 }
 

@@ -23,10 +23,12 @@ object Helpers {
   def getLastMonthDateRange: (Date, Date) ={
     val calendar = Calendar.getInstance()
     calendar.add(Calendar.MONTH, -1)
-    calendar.set(Calendar.DATE, 1)
-    val start = calendar.getTime
     calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
     val end = calendar.getTime
+    calendar.add(Calendar.MONTH, -1)
+    calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
+    val start = calendar.getTime
+
     (start, end)
   }
 
