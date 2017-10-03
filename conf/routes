@@ -2,6 +2,9 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+#ping
+GET  /                         controllers.Application.ping
+
 # Bit coin
 GET /pastPrices                controllers.Application.fetchPricesFor(range: String)
 GET /movingAvg                 controllers.Application.getMovingAvg(from: String, to: String, window:Int)

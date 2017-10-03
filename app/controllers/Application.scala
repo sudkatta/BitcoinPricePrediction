@@ -1,14 +1,15 @@
 package controllers
 
 import java.text.SimpleDateFormat
-import java.util.{Calendar, Date}
+import java.util.Date
 
+import models.SparkEngine.PredictionValues
 import models.{DataLoader, SparkEngine}
 import play.api.libs.json._
 import play.api.mvc._
+import utils.Helpers._
 
 import scala.util.Try
-import utils.Helpers._
 /**
   * Created by Sudheer on 01/10/17.
   */
@@ -23,8 +24,8 @@ object Application extends Controller {
         Try {
           val fromDateStr = x.split("-")(0)
           val toDateStr = x.split("-")(1)
-          val fromDate = new SimpleDateFormat("dd/MM/yyyy").parse(fromDateStr)
-          val toDate = new SimpleDateFormat("dd/MM/yyyy").parse(toDateStr)
+          val fromDate = dateFormatter.parse(fromDateStr)
+          val toDate = dateFormatter.parse(toDateStr)
           if(fromDate.compareTo(toDate) <= 0) Some((fromDate, toDate))
           else None
         }.getOrElse(None)
@@ -39,9 +40,8 @@ object Application extends Controller {
   }
 
   def getMovingAvg(from: String, to: String, window:Int) = Action { request =>
-    val format = new java.text.SimpleDateFormat("dd/MM/yyyy")
-    val fromDate = format.parse(from)
-    val toDate = format.parse(to)
+    val fromDate = dateFormatter.parse(from)
+    val toDate = dateFormatter.parse(to)
     if(fromDate.compareTo(toDate) >= 0 || window < 1){
       BadRequest(Json.obj("status"->"error", "message"-> "Input format should be range=lastweek or range=lastweek or range =dd/MM/yyyy-dd/MM/yyyy(daterange in this format)"))
     }
@@ -56,8 +56,7 @@ object Application extends Controller {
     Ok(Json.obj("status" -> "OK", "prediction" -> prediction))
   }
 
-  def getPriceMovement = Action{ request =>
-    SparkEngine.train
+  def ping = Action {
     Ok(Json.obj("status" -> "OK"))
   }
 

@@ -6,8 +6,7 @@ import org.apache.spark.mllib.linalg._
 import play.api.libs.json._
 
 import scala.util.parsing.json._
-import play.api.libs.json.Writes.dateWrites // do not import everything here, especially DefaultDateWrites
-
+import play.api.libs.json.Writes.dateWrites
 
 /**
   * Created by Sudheer on 01/10/17.
@@ -17,7 +16,7 @@ object DataLoader {
 
 
   case class PricePoint(price: Double, date: Date)
-  implicit val customDateWrites: Writes[java.util.Date] = dateWrites("yyyy-MM-dd")
+  implicit val customDateWrites: Writes[Date] = dateWrites("dd/MM/yyyy")
   implicit val writes = Json.writes[PricePoint]
 
 
