@@ -1,6 +1,5 @@
 package controllers
 
-import java.text.SimpleDateFormat
 import java.util.Date
 
 import models.{DataLoader, MovingAverage, PricePrediction}
@@ -17,8 +16,8 @@ object Application extends Controller {
 
   def fetchPricesFor(range: String) = Action { request =>
     val reqeustedRange:Option[(Date, Date)] = range match {
-      case "lastweek" => Some(getLastWeekDateRange)
-      case "lastmonth" => Some(getLastMonthDateRange)
+      case "lastweek" => Some(getLastWeekDateRange())
+      case "lastmonth" => Some(getLastMonthDateRange())
       case x if x contains "-" =>
         Try {
           val fromDateStr = x.split("-")(0)

@@ -14,12 +14,12 @@ import utils.Helpers._
 object MovingAverage {
 
   def getMovingAverageFromRange(from: Date, to: Date, window: Int):List[PricePoint] ={
-    val modifiedFromDate = dateSubtractDays(from, window-1)
+    val modifiedFromDate = dateAddDays(from, -window+1)
     val listOfPricePoints = DataLoader.getPastData(modifiedFromDate, to)
     getMovingAverageFromList(listOfPricePoints, window)
   }
 
-  private def getMovingAverageFromList(input:List[PricePoint], window: Int):List[PricePoint] ={
+  private[models] def getMovingAverageFromList(input:List[PricePoint], window: Int):List[PricePoint] ={
     val sortedPricePointsInput = input.sortWith((x, y)=> x.date.after(y.date))
     val sortedPricePoints = sc.parallelize(sortedPricePointsInput)
     val listOfPrices = sortedPricePoints.sliding(window).map(curSlice => PricePoint(round(curSlice.map(_.price).sum/curSlice.size), curSlice.map(_.date).max)).collect()

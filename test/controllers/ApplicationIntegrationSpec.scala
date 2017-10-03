@@ -44,7 +44,7 @@ class ApplicationIntegrationSpec extends PlaySpecification {
       response.status must equalTo(OK)
       val pricePoints = (response.json \ "data").as[List[PricePoint]]
 
-      pricePoints.size must equalTo(Helpers.getLastMonthCount)
+      pricePoints.size must equalTo(Helpers.getLastMonthCount())
     }
 
     "return Invalid entry for range = dummy" in new WithServer {
