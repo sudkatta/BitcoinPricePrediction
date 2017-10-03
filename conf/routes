@@ -3,5 +3,7 @@
 # ~~~~
 
 # Bit coin
-GET /pastPrices                controllers.Application.fetchPricesFor(range: String ?= "lastweek")
+GET /pastPrices                controllers.Application.fetchPricesFor(range: String)
+GET /movingAvg                 controllers.Application.getMovingAvg(from: String, to: String, window:Int)
+GET /forecast                  controllers.Application.forecast
 
