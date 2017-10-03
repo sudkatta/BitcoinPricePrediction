@@ -1,19 +1,10 @@
 package controllers
 
-import java.util.Date
-import java.util.concurrent.TimeUnit
-
-import akka.util.Timeout
-import models.DataLoader.PricePoint
-import models.SparkEngine.PredictionValues
-import play.api.libs.functional.syntax._
+import models.{PredictionValues, PricePoint}
 import play.api.libs.json.Reads._
-import play.api.libs.json._
 import play.api.libs.ws._
 import play.api.test.{PlaySpecification, WithServer}
 import utils.Helpers
-import utils.Helpers.dateFormatter
-
 
 
 /**
@@ -21,41 +12,12 @@ import utils.Helpers.dateFormatter
   */
 class ApplicationIntegrationSpec extends PlaySpecification {
 
-  implicit val personLastSeen = new Reads[PricePoint] {
-    def reads(js: JsValue): JsResult[PricePoint] = {
-      JsSuccess(PricePoint(
-        (js \ "price").as[Double],
-        dateFormatter.parse((js \ "date").as[String])))
-    }
-  }
-
-  implicit val predictionValuesReads:Reads[PredictionValues] = (
-    (JsPath \ "price").read[Double] and
-      (JsPath \ "date").read[String]
-    )(PredictionValues.apply _)
-
-//  implicit val pricePointReads:Reads[PricePoint] = (
-//          (JsPath \ "price").read[Double] and
-//            (JsPath \ "date").read[String]
-//          )(PricePoint.apply(_.1, dateFormatter.parse(_.2)))
-//  implicit val DefaultDateReads = dateReads("dd/MM/yyyy")
-//implicit object DateFormat extends Format[java.util.Date] {
-//  val format = new java.text.SimpleDateFormat("yyyy-MM-dd")
-//  def reads(json:JsValue): java.util.Date = format.parse(json.as[String])
-//  def writes(date:java.util.Date) = JsString(format.format(date))
-//}
-
-//  implicit val customDateReads: Reads[Date] = dateReads("dd/MM/yyyy")
-
-
-
   val Localhost = "http://localhost:"
-//  implicit val timeout:Timeout = Timeout(50000, TimeUnit.MILLISECONDS)
+
   "Application" should {
 
     "be reachable" in new WithServer {
       val response = await(WS.url(Localhost + port).get())
-
       response.status must equalTo(OK)
       response.body must contain("{\"status\":\"OK\"}")
     }
@@ -74,14 +36,12 @@ class ApplicationIntegrationSpec extends PlaySpecification {
       val response = await(WS.url(Localhost + port + "/pastPrices?range=lastweek").get())
       response.status must equalTo(OK)
       val pricePoints = (response.json \ "data").as[Seq[PricePoint]]
-
       pricePoints.size must equalTo(7)
     }
 
     "return past prices for range = lastmonth" in new WithServer {
       val response = await(WS.url(Localhost + port + "/pastPrices?range=lastmonth").get())
       response.status must equalTo(OK)
-      println(response.body)
       val pricePoints = (response.json \ "data").as[List[PricePoint]]
 
       pricePoints.size must equalTo(Helpers.getLastMonthCount)

@@ -3,8 +3,7 @@ package controllers
 import java.text.SimpleDateFormat
 import java.util.Date
 
-import models.SparkEngine.PredictionValues
-import models.{DataLoader, SparkEngine}
+import models.{DataLoader, MovingAverage, PricePrediction}
 import play.api.libs.json._
 import play.api.mvc._
 import utils.Helpers._
@@ -46,13 +45,13 @@ object Application extends Controller {
       BadRequest(Json.obj("status"->"error", "message"-> "Input format should be range=lastweek or range=lastweek or range =dd/MM/yyyy-dd/MM/yyyy(daterange in this format)"))
     }
     else {
-      val movingAvg = SparkEngine.getMovingAverageFromRange(fromDate, toDate, window)
+      val movingAvg = MovingAverage.getMovingAverageFromRange(fromDate, toDate, window)
       Ok(Json.obj("status" -> "OK", "data" -> movingAvg))
     }
   }
 
   def forecast = Action {
-    val prediction = SparkEngine.getPricePrediction
+    val prediction = PricePrediction.getPricePrediction
     Ok(Json.obj("status" -> "OK", "prediction" -> prediction))
   }
 
